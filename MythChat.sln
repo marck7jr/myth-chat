@@ -10,12 +10,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solution", ".solution", "{
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EC3CB037-A4AE-40D8-8433-F48D8D333497}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MythChat.Cli", "src\MythChat.Cli\MythChat.Cli.csproj", "{8A214C50-CDDC-4C0E-BB3F-3D0CAC4D4E32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8A214C50-CDDC-4C0E-BB3F-3D0CAC4D4E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A214C50-CDDC-4C0E-BB3F-3D0CAC4D4E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A214C50-CDDC-4C0E-BB3F-3D0CAC4D4E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A214C50-CDDC-4C0E-BB3F-3D0CAC4D4E32}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8A214C50-CDDC-4C0E-BB3F-3D0CAC4D4E32} = {EC3CB037-A4AE-40D8-8433-F48D8D333497}
 	EndGlobalSection
 EndGlobal
