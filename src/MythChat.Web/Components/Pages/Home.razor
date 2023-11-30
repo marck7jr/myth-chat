@@ -1,7 +1,37 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Chat</PageTitle>
 
-<h1>Hello, world!</h1>
+<FluentSplitter Orientation=Orientation.Horizontal BarSize="6" Panel1MinSize="15%" Panel2MinSize="50px">
+    <Panel1>
+        <h1>Escrita</h1>
+        <div class="demopanel">
+            <FluentTextArea @bind-Value=input style="width: 100%;"></FluentTextArea>
+        </div>
+        <FluentButton OnClick="@SendRequest">Enviar Pedido</FluentButton>
+    </Panel1>
+    <Panel2>
+        <h1>@God</h1>
+        <div class="demopanel">
+            <p>
+                Neque laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt. Suspendisse faucibus interdum posuere lorem ipsum 
+                dolor sit amet. Imperdiet sed euismod nisi porta lorem mollis aliquam. Malesuada proin libero nunc consequat interdum. Amet nisl purus
+                in mollis nunc sed id semper risus. Nunc sed augue lacus viverra vitae congue eu. Fermentum dui faucibus in ornare quam viverra. Ut eu 
+                sem integer vitae. Interdum velit laoreet id donec ultrices tincidunt arcu non. Pellentesque dignissim enim sit amet. Scelerisque purus
+                semper eget duis at.
+            </p>
+        </div>
+    </Panel2>
+</FluentSplitter>
 
-Welcome to your new app.
+
+
+@code{
+    string God = "Zeus";
+    string input = "";
+    private void SendRequest()
+    {
+        input = "asdf";
+        StateHasChanged();
+    }
+}
