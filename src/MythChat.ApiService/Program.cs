@@ -17,6 +17,8 @@ builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
 
 var app = builder.Build();
 
+app.MapCarter();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
