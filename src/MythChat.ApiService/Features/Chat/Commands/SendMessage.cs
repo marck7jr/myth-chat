@@ -3,7 +3,11 @@ using Carter.ModelBinding;
 
 using FluentValidation;
 
+using Mapster;
+
 using MediatR;
+
+using Microsoft.SemanticKernel;
 
 namespace MythChat.ApiService.Features.Chat.Commands;
 
@@ -23,19 +27,55 @@ public class SendMessage : ICarterModule
     {
         public string? Agent { get; set; }
         public string? Channel { get; set; }
-        public string? Message { get; set; }
+        public string? Input { get; set; }
+        public string? Region { get; set; }
+    }
+
+    public class SendMessageResponse
+    {
+        public string? Agent { get; set; }
+        public string? Channel { get; set; }
+        public string? Input { get; set; }
+        public string? Output { get; set; }
+        public string? Region { get; set; }
     }
 
     public class SendMessageCommandHandler(
+        ILogger<SendMessageCommandHandler> logger,
+        IKernel kernel,
         IValidator<SendMessageCommand> validator) : IRequestHandler<SendMessageCommand, IResult>
     {
         public async Task<IResult> Handle(SendMessageCommand request, CancellationToken cancellationToken)
         {
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-            return !validationResult.IsValid
-                ? Results.ValidationProblem(validationResult.GetValidationProblems())
-                : throw new NotImplementedException();
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.GetValidationProblems());
+            }
+
+            try
+            {
+                var agent = request.Agent ?? string.Empty;
+                var region = request.Region ?? string.Empty;
+
+                var context = kernel.CreateNewContext();
+
+                context.Variables["input"] = request.Input ?? string.Empty;
+
+                var function = context.Functions.GetFunction(region, agent);
+                var result = await function.InvokeAsync(context, cancellationToken: cancellationToken);
+
+                var response = request.Adapt<SendMessageResponse>();
+                response.Output = result.ToString();
+
+                return Results.Ok(response);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error sending message");
+                return Results.Problem(ex.Message);
+            }
         }
     }
 
@@ -45,7 +85,8 @@ public class SendMessage : ICarterModule
         {
             RuleFor(x => x.Agent).NotEmpty();
             RuleFor(x => x.Channel).NotEmpty();
-            RuleFor(x => x.Message).NotEmpty();
+            RuleFor(x => x.Input).NotEmpty();
+            RuleFor(x => x.Region).NotEmpty();
         }
     }
 }
