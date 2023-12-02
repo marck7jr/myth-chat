@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Plugins.Core;
 
 using MythChat.ApiService.Configuration;
 
@@ -24,7 +25,8 @@ public static class SemanticKernelExtensions
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ToArray();
 
-            var plugins = kernel.ImportSemanticFunctionsFromDirectory(path, pluginDirectoryNames: directories);
+            var orchestrationPlugin = kernel.ImportSemanticFunctionsFromDirectory(path, pluginDirectoryNames: directories);
+            var conversationSummaryPlugin = kernel.ImportFunctions(new ConversationSummaryPlugin(kernel), nameof(ConversationSummaryPlugin));
 
             return kernel;
         });

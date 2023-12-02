@@ -1,6 +1,6 @@
 ﻿# Historic
 
-{{$history}}
+{{ConversationSummaryPlugin.SummarizeConversation $history}}
 
 # Prompt
 

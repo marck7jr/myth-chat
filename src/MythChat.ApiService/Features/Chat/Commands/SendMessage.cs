@@ -101,6 +101,7 @@ public class SendMessage : ICarterModule
                 context.Variables["history"] = string.Join(Environment.NewLine, request.History ?? []);
 
                 var function = context.Functions.GetFunction("Myths", type);
+
                 var result = await function.InvokeAsync(context, cancellationToken: cancellationToken);
 
                 var response = request.Adapt<SendMessageResponse>();
