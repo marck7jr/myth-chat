@@ -1,4 +1,9 @@
+using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Http.HttpClientLibrary;
+
 using MudBlazor.Services;
+
+using MythChat.ApiService.Kiota;
 using MythChat.Web;
 using MythChat.Web.Components;
 
@@ -15,7 +20,20 @@ builder.Services.AddMudServices();
 
 builder.Services.AddOutputCache();
 
-builder.Services.AddHttpClient<WeatherApiClient>(client => client.BaseAddress = new("http://apiservice"));
+builder.Services.AddScoped(provider =>
+{
+    var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+
+    var httpClient = httpClientFactory.CreateClient();
+    var authProvider = new AnonymousAuthenticationProvider();
+    var adapter = new HttpClientRequestAdapter(authProvider, httpClient: httpClient)
+    {
+        BaseUrl = "http://apiservice/"
+    };
+    var client = new ApiServiceClient(adapter);
+
+    return client;
+});
 
 var app = builder.Build();
 

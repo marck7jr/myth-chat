@@ -1,0 +1,26 @@
+﻿@page "/agents"
+
+@inject ApiServiceClient apiServiceClient
+
+<h3>Page</h3>
+
+<ul>
+    @foreach (var item in items)
+    {
+        <li>@item</li>
+    }
+</ul>
+
+@code {
+    private IEnumerable<string?> items = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await apiServiceClient.Chat.Agents.GetAsync();
+        var agents = response?.Agents?.Select(x => x?.Name);
+
+        items = agents ?? [];
+
+        StateHasChanged();
+    }
+}
