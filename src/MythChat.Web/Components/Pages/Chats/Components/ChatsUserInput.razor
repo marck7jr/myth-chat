@@ -1,0 +1,72 @@
+﻿@using MythChat.Web.Components.Pages.Chats.Models
+
+@inject ApiServiceClient apiServiceClient
+@inject ILogger<ChatsUserInput> logger
+
+<MudGrid>
+    <MudItem xs="10">
+        <MudTextField @bind-Value="Message" Label="Message" Variant="Variant.Outlined" />
+    </MudItem>
+    <MudItem xs="2" Class="d-flex">
+        <MudButton OnClick="OnSendButtonClick" Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" Disabled="IsTyping" FullWidth="true">
+            Send
+        </MudButton>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter] public string? Agent { get; set; } = "Zeus";
+    [Parameter] public string? Message { get; set; }
+    [Parameter] public string? Region { get; set; } = "Greece";
+
+    [Parameter] public EventCallback<ChatsEntry> OnMessageSent { get; set; }
+
+    protected bool IsTyping { get; set; } = false;
+
+    private async Task OnSendButtonClick()
+    {
+        IsTyping = true;
+        StateHasChanged();
+
+        var userEntry = new ChatsEntry
+            {
+                Author = "User",
+                Content = Message,
+            };
+
+        await OnMessageSent.InvokeAsync(userEntry);
+
+        try
+        {
+            var command = new SendMessageCommand
+            {
+                Channel = Guid.NewGuid().ToString("N"),
+                Region = Region,
+                Agent = Agent,
+                Input = Message
+            };
+
+            var response = await apiServiceClient.Chat.PostAsync(command);
+            var output = response?.Output;
+
+            var agentEntry = new ChatsEntry
+            {
+                Author = Agent,
+                Content = output,
+                IsFromAgent = true,
+            };
+
+            await OnMessageSent.InvokeAsync(agentEntry);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to send message");
+        }
+        finally
+        {
+            IsTyping = false;
+            Message = null;
+            StateHasChanged();
+        }
+    }
+}

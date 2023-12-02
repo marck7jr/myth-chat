@@ -1,0 +1,44 @@
+﻿@page "/chats"
+@rendermode InteractiveServer
+
+@using MythChat.Web.Components.Pages.Chats.Components
+@using MythChat.Web.Components.Pages.Chats.Models
+
+@inject ApiServiceClient apiServiceClient
+
+<MudText Class="fw-bolder" Typo="Typo.h4">Chats</MudText>
+
+<MudGrid Class="mt-4">
+    <MudItem xs="12">
+        @if (Entries.Any())
+        {
+            <MudPaper Class="p-4">
+                @foreach (var entry in Entries)
+                {
+                    <div class="d-flex">
+                        <MudText Typo="Typo.body1" Class="fw-bold" Color="@(entry.IsFromAgent ? Color.Info : Color.Inherit)">
+                            @(entry.Author):
+                        </MudText>
+                        <MudText Typo="Typo.body1" Class="ms-2">
+                            @entry.Content
+                        </MudText>
+                    </div>
+                }
+            </MudPaper>
+        }
+    </MudItem>
+    <MudItem xs="12">
+        <ChatsUserInput Agent="Zeus" Region="Greece" OnMessageSent="OnMessageSent" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    protected List<ChatsEntry> Entries { get; set; } = [];
+
+    private async Task OnMessageSent(ChatsEntry entry)
+    {
+        Entries.Add(entry);
+
+        await InvokeAsync(StateHasChanged);
+    }
+}
