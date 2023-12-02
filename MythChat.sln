@@ -14,13 +14,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EC3CB037-A4A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MythChat.Cli", "src\MythChat.Cli\MythChat.Cli.csproj", "{8A214C50-CDDC-4C0E-BB3F-3D0CAC4D4E32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MythChat.AppHost", "src\MythChat.AppHost\MythChat.AppHost.csproj", "{973D4A21-A4B2-4181-8290-8147A60EACAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MythChat.AppHost", "src\MythChat.AppHost\MythChat.AppHost.csproj", "{973D4A21-A4B2-4181-8290-8147A60EACAE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MythChat.ServiceDefaults", "src\MythChat.ServiceDefaults\MythChat.ServiceDefaults.csproj", "{78F4F1F9-E3AB-477B-A850-22B7D3198F2E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MythChat.ApiService", "src\MythChat.ApiService\MythChat.ApiService.csproj", "{3F21C6C2-D07D-4A72-B050-80E5AB605F84}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MythChat.Web", "src\MythChat.Web\MythChat.Web.csproj", "{3D595169-D058-4BEB-A10D-4BBC93869910}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MythChat.ApiService.Kiota", "src\MythChat.ApiService.Kiota\MythChat.ApiService.Kiota.csproj", "{7951A633-5FAA-4669-BCBF-B8D204389E34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +50,10 @@ Global
 		{3D595169-D058-4BEB-A10D-4BBC93869910}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D595169-D058-4BEB-A10D-4BBC93869910}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D595169-D058-4BEB-A10D-4BBC93869910}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7951A633-5FAA-4669-BCBF-B8D204389E34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7951A633-5FAA-4669-BCBF-B8D204389E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7951A633-5FAA-4669-BCBF-B8D204389E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7951A633-5FAA-4669-BCBF-B8D204389E34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +64,7 @@ Global
 		{78F4F1F9-E3AB-477B-A850-22B7D3198F2E} = {EC3CB037-A4AE-40D8-8433-F48D8D333497}
 		{3F21C6C2-D07D-4A72-B050-80E5AB605F84} = {EC3CB037-A4AE-40D8-8433-F48D8D333497}
 		{3D595169-D058-4BEB-A10D-4BBC93869910} = {EC3CB037-A4AE-40D8-8433-F48D8D333497}
+		{7951A633-5FAA-4669-BCBF-B8D204389E34} = {EC3CB037-A4AE-40D8-8433-F48D8D333497}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {99ACB7DE-3F29-40BB-B65F-F87ADC84739A}
