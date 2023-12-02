@@ -11,4 +11,8 @@
     <ProjectReference Include="..\MythChat.ServiceDefaults\MythChat.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MudBlazor" Version="6.11.1" />
+  </ItemGroup>
+
 </Project>
