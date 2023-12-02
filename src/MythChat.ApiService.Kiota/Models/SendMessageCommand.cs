@@ -14,13 +14,13 @@ namespace MythChat.ApiService.Kiota.Models {
 #else
         public string Agent { get; set; }
 #endif
-        /// <summary>The channel property</summary>
+        /// <summary>The history property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Channel { get; set; }
+        public List<SendMessageCommandHistoryItem>? History { get; set; }
 #nullable restore
 #else
-        public string Channel { get; set; }
+        public List<SendMessageCommandHistoryItem> History { get; set; }
 #endif
         /// <summary>The input property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -52,7 +52,7 @@ namespace MythChat.ApiService.Kiota.Models {
         public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers() {
             return new Dictionary<string, Action<IParseNode>> {
                 {"agent", n => { Agent = n.GetStringValue(); } },
-                {"channel", n => { Channel = n.GetStringValue(); } },
+                {"history", n => { History = n.GetCollectionOfObjectValues<SendMessageCommandHistoryItem>(SendMessageCommandHistoryItem.CreateFromDiscriminatorValue)?.ToList(); } },
                 {"input", n => { Input = n.GetStringValue(); } },
                 {"region", n => { Region = n.GetStringValue(); } },
             };
@@ -64,7 +64,7 @@ namespace MythChat.ApiService.Kiota.Models {
         public virtual void Serialize(ISerializationWriter writer) {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("agent", Agent);
-            writer.WriteStringValue("channel", Channel);
+            writer.WriteCollectionOfObjectValues<SendMessageCommandHistoryItem>("history", History);
             writer.WriteStringValue("input", Input);
             writer.WriteStringValue("region", Region);
         }

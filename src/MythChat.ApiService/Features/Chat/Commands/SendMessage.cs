@@ -1,4 +1,6 @@
-﻿using Carter;
+﻿using System.Text;
+
+using Carter;
 using Carter.ModelBinding;
 
 using FluentValidation;
@@ -26,9 +28,20 @@ public class SendMessage : ICarterModule
     public class SendMessageCommand : IRequest<IResult>
     {
         public string? Agent { get; set; }
-        public string? Channel { get; set; }
         public string? Input { get; set; }
         public string? Region { get; set; }
+        public IEnumerable<SendMessageCommandHistoryItem>? History { get; set; }
+    }
+
+    public class SendMessageCommandHistoryItem
+    {
+        public string? Author { get; set; }
+        public string? Content { get; set; }
+
+        public override string ToString()
+        {
+            return $"- {Author}: {Content}";
+        }
     }
 
     public class SendMessageResponse
@@ -62,6 +75,7 @@ public class SendMessage : ICarterModule
                 var context = kernel.CreateNewContext();
 
                 context.Variables["input"] = request.Input ?? string.Empty;
+                context.Variables["history"] = string.Join(Environment.NewLine, request.History ?? []);
 
                 var function = context.Functions.GetFunction(region, agent);
                 var result = await function.InvokeAsync(context, cancellationToken: cancellationToken);
@@ -84,7 +98,6 @@ public class SendMessage : ICarterModule
         public SendMessageCommandValidator()
         {
             RuleFor(x => x.Agent).NotEmpty();
-            RuleFor(x => x.Channel).NotEmpty();
             RuleFor(x => x.Input).NotEmpty();
             RuleFor(x => x.Region).NotEmpty();
         }
