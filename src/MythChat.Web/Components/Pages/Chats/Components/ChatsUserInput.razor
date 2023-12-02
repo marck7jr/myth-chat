@@ -21,6 +21,7 @@
 
     [Parameter] public EventCallback<ChatsEntry> OnMessageSent { get; set; }
 
+    protected List<ChatsEntry> Entries { get; set; } = new();
     protected bool IsTyping { get; set; } = false;
 
     private async Task OnSendButtonClick()
@@ -29,21 +30,29 @@
         StateHasChanged();
 
         var userEntry = new ChatsEntry
-            {
-                Author = "User",
-                Content = Message,
-            };
+        {
+            Author = "User",
+            Content = Message,
+        };
+
+        Entries.Add(userEntry);
 
         await OnMessageSent.InvokeAsync(userEntry);
 
         try
         {
+            var history = Entries.Select(x => new SendMessageCommandHistoryItem
+            {
+                Author = x.Author,
+                Content = x.Content,
+            });
+
             var command = new SendMessageCommand
             {
-                Channel = Guid.NewGuid().ToString("N"),
-                Region = Region,
                 Agent = Agent,
-                Input = Message
+                History = history.ToList(),
+                Input = Message,
+                Region = Region,
             };
 
             var response = await apiServiceClient.Chat.PostAsync(command);
@@ -55,6 +64,8 @@
                 Content = output,
                 IsFromAgent = true,
             };
+
+            Entries.Add(agentEntry);
 
             await OnMessageSent.InvokeAsync(agentEntry);
         }
