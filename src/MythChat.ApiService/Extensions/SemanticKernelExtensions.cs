@@ -9,7 +9,7 @@ public static class SemanticKernelExtensions
 {
     public static IServiceCollection AddSemanticKernel(this IServiceCollection services)
     {
-        services.AddSingleton(provider =>
+        services.AddScoped(provider =>
         {
             var optionsSnapshot = provider.GetRequiredService<IOptionsSnapshot<SemanticKernelOptions>>();
             var options = optionsSnapshot.Value;
