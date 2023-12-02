@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MythChat.ApiService.Kiota\MythChat.ApiService.Kiota.csproj" />
     <ProjectReference Include="..\MythChat.ServiceDefaults\MythChat.ServiceDefaults.csproj" />
   </ItemGroup>
 

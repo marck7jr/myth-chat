@@ -1,4 +1,7 @@
-using MythChat.Web;
+using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Http.HttpClientLibrary;
+
+using MythChat.ApiService.Kiota;
 using MythChat.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +15,20 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddOutputCache();
 
-builder.Services.AddHttpClient<WeatherApiClient>(client=> client.BaseAddress = new("http://apiservice"));
+builder.Services.AddScoped(provider =>
+{
+    var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+
+    var httpClient = httpClientFactory.CreateClient();
+    var authProvider = new AnonymousAuthenticationProvider();
+    var adapter = new HttpClientRequestAdapter(authProvider, httpClient: httpClient)
+    {
+        BaseUrl = "https://apiservice/"
+    };
+    var client = new ApiServiceClient(adapter);
+
+    return client;
+});
 
 var app = builder.Build();
 
@@ -29,7 +45,7 @@ app.UseOutputCache();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-    
+
 app.MapDefaultEndpoints();
 
 app.Run();
