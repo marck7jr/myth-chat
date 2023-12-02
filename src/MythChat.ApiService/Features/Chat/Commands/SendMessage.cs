@@ -19,7 +19,7 @@ public class SendMessage : ICarterModule
             .WithName(nameof(SendMessage))
             .WithTags("Chat")
             .ProducesValidationProblem()
-            .Produces<IResult>(StatusCodes.Status200OK)
+            .Produces<SendMessageResponse>(StatusCodes.Status200OK)
             .WithOpenApi();
     }
 

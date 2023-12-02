@@ -17,7 +17,7 @@ public class GetRegions : ICarterModule
             .WithName(nameof(GetRegions))
             .WithTags("Chat")
             .ProducesValidationProblem()
-            .Produces<IResult>(StatusCodes.Status200OK)
+            .Produces<GetRegionsResponse>(StatusCodes.Status200OK)
             .WithOpenApi();
     }
 

@@ -17,7 +17,7 @@ public class GetAgents : ICarterModule
             .WithName(nameof(GetAgents))
             .WithTags("Chat")
             .ProducesValidationProblem()
-            .Produces<IResult>(StatusCodes.Status200OK)
+            .Produces<GetAvailableAgentsResponse>(StatusCodes.Status200OK)
             .WithOpenApi();
     }
 
