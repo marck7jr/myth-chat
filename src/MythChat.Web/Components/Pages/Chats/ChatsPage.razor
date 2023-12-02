@@ -6,40 +6,43 @@
 
 @inject ApiServiceClient apiServiceClient
 
-<MudText Class="fw-bolder" Typo="Typo.h4">Chats</MudText>
 
-<MudGrid Class="mt-4">
-    <MudItem xs="12">
-        @if (Entries.Any())
-        {
-            <MudPaper Class="p-4">
-                @if (IsTyping)
-                {
-                    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
-                }
+<MudContainer>
+    <MudText Class="fw-bolder" Typo="Typo.h4">Chats</MudText>
 
-                @foreach (var entry in Entries)
-                {
-                    <div class="d-flex my-4">
-                        <MudText Typo="Typo.body1" Class="fw-bold" Color="@(entry.IsFromAgent ? Color.Info : Color.Inherit)">
-                            @(entry.Author):
-                        </MudText>
-                        <MudText Typo="Typo.body1" Class="ms-2">
-                            @entry.Content
-                        </MudText>
-                    </div>
-                }
-            </MudPaper>
-        }
-    </MudItem>
-    <MudItem xs="12">
-        <ChatsUserInput Agent="Zeus" Region="Greece" OnMessageSent="OnMessageSent" @bind-IsTyping="IsTyping" />
-    </MudItem>
-</MudGrid>
+    <MudGrid Class="mt-4">
+        <MudItem xs="12">
+            @if (Entries.Any())
+            {
+                <MudPaper Class="p-4">
+                    @if (IsLoading)
+                    {
+                        <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+                    }
+
+                    @foreach (var entry in Entries)
+                    {
+                        <div class="d-flex my-4">
+                            <MudText Typo="Typo.body1" Class="fw-bold" Color="@(entry.IsFromAgent ? Color.Info : Color.Inherit)">
+                                @(entry.Author):
+                            </MudText>
+                            <MudText Typo="Typo.body1" Class="ms-2">
+                                @entry.Content
+                            </MudText>
+                        </div>
+                    }
+                </MudPaper>
+            }
+        </MudItem>
+        <MudItem xs="12">
+            <ChatsUserInput Agent="Zeus" Region="Greece" OnMessageSent="OnMessageSent" @bind-IsLoading="IsLoading" />
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
 @code {
     protected List<ChatsEntry> Entries { get; set; } = [];
-    protected bool IsTyping { get; set;  }
+    protected bool IsLoading { get; set; }
 
     private async Task OnMessageSent(ChatsEntry entry)
     {

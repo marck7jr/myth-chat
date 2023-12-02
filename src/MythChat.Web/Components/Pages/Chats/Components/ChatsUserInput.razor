@@ -3,41 +3,57 @@
 @inject ApiServiceClient apiServiceClient
 @inject ILogger<ChatsUserInput> logger
 
-<MudGrid>
-    <MudItem xs="10">
-        <MudTextField @bind-Value="Message" Label="Message" Variant="Variant.Outlined" />
-    </MudItem>
-    <MudItem xs="2" Class="d-flex">
-        <MudButton OnClick="OnSendButtonClick" Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" Disabled="IsTyping" FullWidth="true">
-            Send
-        </MudButton>
-    </MudItem>
-</MudGrid>
+<EditForm @ref="editForm" Model="Model" OnValidSubmit="OnValidSubmit">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudTextField Disabled="IsLoading"
+                          Immediate="true"
+                          Label="Message"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@Icons.Material.Filled.Send"
+                          OnAdornmentClick="OnValidSubmit"
+                          Variant="Variant.Outlined"
+                          @bind-Value="Model.Message" />
+        </MudItem>
+    </MudGrid>
+</EditForm>
 
 @code {
+    public class ChatUserInputModel
+    {
+        public string? Message { get; set; }
+    }
+
+    private EditForm editForm = null!;
+
     [Parameter] public string? Agent { get; set; } = "Zeus";
-    [Parameter] public string? Message { get; set; }
     [Parameter] public string? Region { get; set; } = "Greece";
-    [Parameter] public bool IsTyping { get; set; } = false;
-    [Parameter] public EventCallback<bool> IsTypingChanged { get; set; }
+    [Parameter] public bool IsLoading { get; set; } = false;
+    [Parameter] public EventCallback<bool> IsLoadingChanged { get; set; }
 
     [Parameter] public EventCallback<ChatsEntry> OnMessageSent { get; set; }
 
     protected List<ChatsEntry> Entries { get; set; } = new();
+    protected ChatUserInputModel Model { get; set; } = new();
 
-    private async Task OnSendButtonClick()
+    private async Task OnValidSubmit()
     {
-        IsTyping = true;
-        
-        await IsTypingChanged.InvokeAsync(IsTyping);
+        if (string.IsNullOrWhiteSpace(Model.Message))
+        {
+            return;
+        }
+
+        IsLoading = true;
+
+        await IsLoadingChanged.InvokeAsync(IsLoading);
 
         StateHasChanged();
 
         var userEntry = new ChatsEntry
-        {
-            Author = "User",
-            Content = Message,
-        };
+            {
+                Author = "User",
+                Content = Model.Message,
+            };
 
         Entries.Add(userEntry);
 
@@ -46,28 +62,28 @@
         try
         {
             var history = Entries.Select(x => new SendMessageCommandHistoryItem
-            {
-                Author = x.Author,
-                Content = x.Content,
-            });
+                {
+                    Author = x.Author,
+                    Content = x.Content,
+                });
 
             var command = new SendMessageCommand
-            {
-                Agent = Agent,
-                History = history.ToList(),
-                Input = Message,
-                Region = Region,
-            };
+                {
+                    Agent = Agent,
+                    History = history.ToList(),
+                    Input = Model.Message,
+                    Region = Region,
+                };
 
             var response = await apiServiceClient.Chat.PostAsync(command);
             var output = response?.Output;
 
             var agentEntry = new ChatsEntry
-            {
-                Author = Agent,
-                Content = output,
-                IsFromAgent = true,
-            };
+                {
+                    Author = Agent,
+                    Content = output,
+                    IsFromAgent = true,
+                };
 
             Entries.Add(agentEntry);
 
@@ -79,10 +95,12 @@
         }
         finally
         {
-            IsTyping = false;
-            await IsTypingChanged.InvokeAsync(IsTyping);
-            Message = null;
+            IsLoading = false;
+            await IsLoadingChanged.InvokeAsync(IsLoading);
+
             StateHasChanged();
         }
+
+        Model = new();
     }
 }
