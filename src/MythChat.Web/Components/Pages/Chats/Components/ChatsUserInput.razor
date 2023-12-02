@@ -2,13 +2,14 @@
 
 @inject ApiServiceClient apiServiceClient
 @inject ILogger<ChatsUserInput> logger
+@inject ISnackbar snackbar
 
 <EditForm @ref="editForm" Model="Model" OnValidSubmit="OnValidSubmit">
     <MudGrid>
         <MudItem xs="12">
             <MudTextField Disabled="IsLoading"
                           Immediate="true"
-                          Label="Message"
+                          Label="@Agent"
                           Adornment="Adornment.End"
                           AdornmentIcon="@Icons.Material.Filled.Send"
                           OnAdornmentClick="OnValidSubmit"
@@ -27,7 +28,9 @@
     private EditForm editForm = null!;
 
     [Parameter] public string? Agent { get; set; } = "Zeus";
+    [Parameter] public EventCallback<string?> AgentChanged { get; set; }
     [Parameter] public string? Region { get; set; } = "Greece";
+    [Parameter] public EventCallback<string?> RegionChanged { get; set; }
     [Parameter] public bool IsLoading { get; set; } = false;
     [Parameter] public EventCallback<bool> IsLoadingChanged { get; set; }
 
@@ -91,6 +94,7 @@
         }
         catch (Exception ex)
         {
+            snackbar.Add($"Failed to send message: {ex.Message}", Severity.Error);
             logger.LogError(ex, "Failed to send message");
         }
         finally

@@ -35,12 +35,18 @@
             }
         </MudItem>
         <MudItem xs="12">
-            <ChatsUserInput Agent="Zeus" Region="Greece" OnMessageSent="OnMessageSent" @bind-IsLoading="IsLoading" />
+            <ChatsUserInput OnMessageSent="OnMessageSent"
+                            @bind-Agent="@Agent"
+                            @bind-Region="@Region"
+                            @bind-IsLoading="IsLoading" />
         </MudItem>
     </MudGrid>
 </MudContainer>
 
 @code {
+    [SupplyParameterFromQuery] public string? Agent { get; set; } = "Zeus";
+    [SupplyParameterFromQuery] public string? Region { get; set; } = "Greece";
+
     protected List<ChatsEntry> Entries { get; set; } = [];
     protected bool IsLoading { get; set; }
 

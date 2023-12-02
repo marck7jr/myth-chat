@@ -75,23 +75,25 @@ public class SendMessage : ICarterModule
 
             try
             {
+                var agent = request.Agent?.Pascalize() ?? string.Empty;
+                var region = request.Region?.Pascalize() ?? string.Empty;
                 var options = optionsSnapshot.Value;
-                var agent = options.Agents.FirstOrDefault(x => x.Name == request.Agent && x.Group == request.Region);
+                var instance = options.Agents.FirstOrDefault(x => x.Name == agent && x.Group == region);
 
-                if (agent is null)
+                if (instance is null)
                 {
                     return Results.Problem("Agent not found");
                 }
 
-                var type = agent.Type;
+                var type = instance.Type;
                 var context = kernel.CreateNewContext();
-                var properties = agent.GetType().GetProperties();
+                var properties = instance.GetType().GetProperties();
 
                 foreach (var property in properties)
                 {
                     var name = property.Name.Camelize();
 
-                    context.Variables[name] = property.GetValue(agent)?.ToString() ?? string.Empty;
+                    context.Variables[name] = property.GetValue(instance)?.ToString() ?? string.Empty;
                 }
 
 
