@@ -18,15 +18,19 @@
     [Parameter] public string? Agent { get; set; } = "Zeus";
     [Parameter] public string? Message { get; set; }
     [Parameter] public string? Region { get; set; } = "Greece";
+    [Parameter] public bool IsTyping { get; set; } = false;
+    [Parameter] public EventCallback<bool> IsTypingChanged { get; set; }
 
     [Parameter] public EventCallback<ChatsEntry> OnMessageSent { get; set; }
 
     protected List<ChatsEntry> Entries { get; set; } = new();
-    protected bool IsTyping { get; set; } = false;
 
     private async Task OnSendButtonClick()
     {
         IsTyping = true;
+        
+        await IsTypingChanged.InvokeAsync(IsTyping);
+
         StateHasChanged();
 
         var userEntry = new ChatsEntry
@@ -76,6 +80,7 @@
         finally
         {
             IsTyping = false;
+            await IsTypingChanged.InvokeAsync(IsTyping);
             Message = null;
             StateHasChanged();
         }

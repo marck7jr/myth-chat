@@ -28,7 +28,7 @@ builder.Services.AddScoped(provider =>
     var authProvider = new AnonymousAuthenticationProvider();
     var adapter = new HttpClientRequestAdapter(authProvider, httpClient: httpClient)
     {
-        BaseUrl = "http://apiservice/"
+        BaseUrl = "http://apiservice/",
     };
     var client = new ApiServiceClient(adapter);
 
