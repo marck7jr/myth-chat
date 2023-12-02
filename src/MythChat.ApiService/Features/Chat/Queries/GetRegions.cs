@@ -5,7 +5,9 @@ using FluentValidation;
 
 using MediatR;
 
-using Microsoft.SemanticKernel;
+using Microsoft.Extensions.Options;
+
+using MythChat.ApiService.Configuration;
 
 namespace MythChat.ApiService.Features.Chat.Queries;
 
@@ -39,8 +41,8 @@ public class GetRegions : ICarterModule
     }
 
     public class GetRegionsQueryHandler(
-        IKernel kernel,
         ILogger<GetRegionsQueryHandler> logger,
+        IOptionsSnapshot<SemanticKernelOptions> optionsSnapshot,
         IValidator<GetRegionsQuery> validator) : IRequestHandler<GetRegionsQuery, IResult>
     {
         public async Task<IResult> Handle(GetRegionsQuery request, CancellationToken cancellationToken)
@@ -54,9 +56,9 @@ public class GetRegions : ICarterModule
 
             try
             {
-                var regions = kernel.Functions
-                    .GetFunctionViews()
-                    .GroupBy(x => x.PluginName)
+                var options = optionsSnapshot.Value;
+                var regions = options.Agents
+                    .GroupBy(x => x.Group)
                     .Select(x => new GetRegionsResponseRegion
                     {
                         Name = x.Key,

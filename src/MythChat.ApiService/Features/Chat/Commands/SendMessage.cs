@@ -5,11 +5,16 @@ using Carter.ModelBinding;
 
 using FluentValidation;
 
+using Humanizer;
+
 using Mapster;
 
 using MediatR;
 
+using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
+
+using MythChat.ApiService.Configuration;
 
 namespace MythChat.ApiService.Features.Chat.Commands;
 
@@ -56,6 +61,7 @@ public class SendMessage : ICarterModule
     public class SendMessageCommandHandler(
         ILogger<SendMessageCommandHandler> logger,
         IKernel kernel,
+        IOptionsSnapshot<SemanticKernelOptions> optionsSnapshot,
         IValidator<SendMessageCommand> validator) : IRequestHandler<SendMessageCommand, IResult>
     {
         public async Task<IResult> Handle(SendMessageCommand request, CancellationToken cancellationToken)
@@ -69,15 +75,30 @@ public class SendMessage : ICarterModule
 
             try
             {
-                var agent = request.Agent ?? string.Empty;
-                var region = request.Region ?? string.Empty;
+                var options = optionsSnapshot.Value;
+                var agent = options.Agents.FirstOrDefault(x => x.Name == request.Agent && x.Group == request.Region);
 
+                if (agent is null)
+                {
+                    return Results.Problem("Agent not found");
+                }
+
+                var type = agent.Type;
                 var context = kernel.CreateNewContext();
+                var properties = agent.GetType().GetProperties();
+
+                foreach (var property in properties)
+                {
+                    var name = property.Name.Camelize();
+
+                    context.Variables[name] = property.GetValue(agent)?.ToString() ?? string.Empty;
+                }
+
 
                 context.Variables["input"] = request.Input ?? string.Empty;
                 context.Variables["history"] = string.Join(Environment.NewLine, request.History ?? []);
 
-                var function = context.Functions.GetFunction(region, agent);
+                var function = context.Functions.GetFunction("Myths", type);
                 var result = await function.InvokeAsync(context, cancellationToken: cancellationToken);
 
                 var response = request.Adapt<SendMessageResponse>();

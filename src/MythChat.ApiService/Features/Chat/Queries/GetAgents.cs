@@ -5,7 +5,10 @@ using FluentValidation;
 
 using MediatR;
 
+using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
+
+using MythChat.ApiService.Configuration;
 
 namespace MythChat.ApiService.Features.Chat.Queries;
 
@@ -39,8 +42,8 @@ public class GetAgents : ICarterModule
     }
 
     public class GetAvailableAgentsQueryHandler(
-        IKernel kernel,
         ILogger<GetAvailableAgentsQueryHandler> logger,
+        IOptionsSnapshot<SemanticKernelOptions> optionsSnapshot,
         IValidator<GetAvailableAgentsQuery> validator) : IRequestHandler<GetAvailableAgentsQuery, IResult>
     {
         public async Task<IResult> Handle(GetAvailableAgentsQuery request, CancellationToken cancellationToken)
@@ -54,13 +57,13 @@ public class GetAgents : ICarterModule
 
             try
             {
-                var agents = kernel.Functions
-                    .GetFunctionViews()
+                var options = optionsSnapshot.Value;
+                var agents = options.Agents
                     .Select(x => new GetAvailableAgentsResponseAgent
                     {
                         Name = x.Name,
                         Description = x.Description,
-                        Region = x.PluginName,
+                        Region = x.Group,
                     });
 
                 if (!string.IsNullOrWhiteSpace(request.Query))
