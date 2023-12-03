@@ -5,56 +5,56 @@ using System.IO;
 using System.Linq;
 using System;
 namespace MythChat.ApiService.Kiota.Models {
-    public class GetAvailableAgentsResponseAgent : IParsable {
-        /// <summary>The description property</summary>
+    public class AskResponse : IParsable {
+        /// <summary>The agent property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Description { get; set; }
+        public string? Agent { get; set; }
 #nullable restore
 #else
-        public string Description { get; set; }
+        public string Agent { get; set; }
 #endif
-        /// <summary>The group property</summary>
+        /// <summary>The channel property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Group { get; set; }
+        public string? Channel { get; set; }
 #nullable restore
 #else
-        public string Group { get; set; }
+        public string Channel { get; set; }
 #endif
-        /// <summary>The name property</summary>
+        /// <summary>The input property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Name { get; set; }
+        public string? Input { get; set; }
 #nullable restore
 #else
-        public string Name { get; set; }
+        public string Input { get; set; }
 #endif
-        /// <summary>The type property</summary>
+        /// <summary>The output property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Type { get; set; }
+        public string? Output { get; set; }
 #nullable restore
 #else
-        public string Type { get; set; }
+        public string Output { get; set; }
 #endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static GetAvailableAgentsResponseAgent CreateFromDiscriminatorValue(IParseNode parseNode) {
+        public static AskResponse CreateFromDiscriminatorValue(IParseNode parseNode) {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new GetAvailableAgentsResponseAgent();
+            return new AskResponse();
         }
         /// <summary>
         /// The deserialization information for the current model
         /// </summary>
         public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers() {
             return new Dictionary<string, Action<IParseNode>> {
-                {"description", n => { Description = n.GetStringValue(); } },
-                {"group", n => { Group = n.GetStringValue(); } },
-                {"name", n => { Name = n.GetStringValue(); } },
-                {"type", n => { Type = n.GetStringValue(); } },
+                {"agent", n => { Agent = n.GetStringValue(); } },
+                {"channel", n => { Channel = n.GetStringValue(); } },
+                {"input", n => { Input = n.GetStringValue(); } },
+                {"output", n => { Output = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -63,10 +63,10 @@ namespace MythChat.ApiService.Kiota.Models {
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer) {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("description", Description);
-            writer.WriteStringValue("group", Group);
-            writer.WriteStringValue("name", Name);
-            writer.WriteStringValue("type", Type);
+            writer.WriteStringValue("agent", Agent);
+            writer.WriteStringValue("channel", Channel);
+            writer.WriteStringValue("input", Input);
+            writer.WriteStringValue("output", Output);
         }
     }
 }
