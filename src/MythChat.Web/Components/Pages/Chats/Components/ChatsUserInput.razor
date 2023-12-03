@@ -29,6 +29,7 @@
 
     [Parameter] public string? Agent { get; set; } = "Zeus";
     [Parameter] public EventCallback<string?> AgentChanged { get; set; }
+    [Parameter] public string? Channel { get; set; } = Guid.NewGuid().ToString("N");
     [Parameter] public string? Region { get; set; } = "Greece";
     [Parameter] public EventCallback<string?> RegionChanged { get; set; }
     [Parameter] public bool IsLoading { get; set; } = false;
@@ -64,12 +65,6 @@
 
         try
         {
-            var history = Entries.Select(x => new SendMessageCommandHistoryItem
-                {
-                    Author = x.Author,
-                    Content = x.Content,
-                });
-
             var command = new AskCommand
                 {
                     Agent = Agent,
@@ -77,7 +72,7 @@
                     Input = Model.Message,
                 };
 
-            var response = await apiServiceClient.Chat.Ask.PostAsync(command);
+            var response = await apiServiceClient.Chat.Ask[Channel].PostAsync(command);
             var output = response?.Output;
 
             var agentEntry = new ChatsEntry

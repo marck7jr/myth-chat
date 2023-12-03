@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire components.
 builder.AddServiceDefaults();
+builder.AddRedisDistributedCache("redis");
 
 builder.Services.ConfigureOptions<ChatOptionsBuilder>();
 builder.Services.ConfigureOptions<SemanticKernelOptionsBuilder>();

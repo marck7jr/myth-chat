@@ -1,8 +1,12 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var apiservice = builder.AddProject<Projects.MythChat_ApiService>("apiservice");
+var cache = builder.AddRedisContainer("redis");
 
-builder.AddProject<Projects.MythChat_Web>("webfrontend")
-    .WithReference(apiservice);
+var api = builder.AddProject<Projects.MythChat_ApiService>("api")
+    .WithReference(cache);
+
+builder.AddProject<Projects.MythChat_Web>("web")
+    .WithReference(api)
+    .WithReference(cache);
 
 builder.Build().Run();

@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire components.
 builder.AddServiceDefaults();
+builder.AddRedisOutputCache("redis");
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -28,7 +29,7 @@ builder.Services.AddScoped(provider =>
     var authProvider = new AnonymousAuthenticationProvider();
     var adapter = new HttpClientRequestAdapter(authProvider, httpClient: httpClient)
     {
-        BaseUrl = "http://apiservice/",
+        BaseUrl = "http://api/",
     };
     var client = new ApiServiceClient(adapter);
 

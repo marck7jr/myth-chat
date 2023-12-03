@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" Version="8.0.0-preview.1.23557.2" />
     <PackageReference Include="MudBlazor" Version="6.11.1" />
   </ItemGroup>
 

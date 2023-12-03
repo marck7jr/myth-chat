@@ -1,4 +1,6 @@
-﻿using Carter;
+﻿using System.Text.Json;
+
+using Carter;
 using Carter.ModelBinding;
 
 using FluentValidation;
@@ -7,6 +9,7 @@ using Mapster;
 
 using MediatR;
 
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 
@@ -19,7 +22,10 @@ public class Ask : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/chat/ask", async (AskCommand command, IMediator mediator) => await mediator.Send(command))
+        app.MapPost("/chat/ask/{channel}", async (string channel, AskCommand command, IMediator mediator) => await mediator.Send(command with
+        {
+            Channel = channel,
+        }))
             .WithName(nameof(Ask))
             .WithTags("Chat")
             .ProducesValidationProblem()
@@ -45,6 +51,7 @@ public class Ask : ICarterModule
     }
 
     public class AskCommandHandler(
+        IDistributedCache distributedCache,
         IKernel kernel,
         IOptionsSnapshot<ChatOptions> optionsSnapshot,
         IValidator<AskCommand> validator) : IRequestHandler<AskCommand, IResult>
@@ -60,7 +67,6 @@ public class Ask : ICarterModule
 
             try
             {
-
                 var options = optionsSnapshot.Value;
                 var agent = options.Agents.FirstOrDefault(x =>
                     string.Equals(x.Name, request.Agent, StringComparison.OrdinalIgnoreCase) &&
@@ -74,6 +80,15 @@ public class Ask : ICarterModule
                 var context = kernel.CreateNewContext()
                     .WithVariables(agent)
                     .WithVariables(request);
+
+                var cacheKey = $"{request.Group}:{request.Agent}:{request.Channel}";
+                var cachedContext = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
+
+                var history = cachedContext is not null
+                    ? JsonSerializer.Deserialize<List<string>>(cachedContext) ?? []
+                    : [];
+
+                context.Variables["history"] = string.Join(Environment.NewLine, history);
 
                 var function = kernel.GetOrchestrationFunction(agent.Type);
 
@@ -89,6 +104,11 @@ public class Ask : ICarterModule
                     Output = functionResult.ToString(),
                 };
 
+                history.Add($"User: {response.Input}");
+                history.Add($"{agent.Name}: {response.Output}");
+
+                await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(history), cancellationToken);
+
                 var result = TypedResults.Ok(response);
                 return result;
             }
@@ -103,6 +123,7 @@ public class Ask : ICarterModule
     {
         public AskCommandValidator()
         {
+            RuleFor(x => x.Channel).NotEmpty();
             RuleFor(x => x.Agent).NotEmpty();
             RuleFor(x => x.Group).NotEmpty();
             RuleFor(x => x.Input).NotEmpty();
