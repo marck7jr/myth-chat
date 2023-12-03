@@ -10,7 +10,7 @@ public class ChatMessageRepository(
     IDistributedCache distributedCache,
     ILogger<ChatMessageRepository> logger) : IChatMessageRepository
 {
-    public async Task<IEnumerable<string>> GetMessagesAsync(ChatAgent? agent, string? channel, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<ChatMessage>> GetMessagesAsync(ChatAgent? agent, string? channel, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(agent);
         ArgumentException.ThrowIfNullOrWhiteSpace(channel);
@@ -19,7 +19,7 @@ public class ChatMessageRepository(
         var cachedContext = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
         var history = cachedContext is not null
-            ? JsonSerializer.Deserialize<List<string>>(cachedContext) ?? []
+            ? JsonSerializer.Deserialize<List<ChatMessage>>(cachedContext) ?? []
             : [];
 
         logger.LogInformation("Retrieved {Count} messages from {CacheKey}", history.Count, cacheKey);
@@ -27,7 +27,7 @@ public class ChatMessageRepository(
         return history ?? [];
     }
 
-    public async Task<IEnumerable<string>> SaveMessagesAsync(ChatAgent? agent, string? channel, IEnumerable<string>? messages, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<ChatMessage>> SaveMessagesAsync(ChatAgent? agent, string? channel, IEnumerable<ChatMessage>? messages, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(agent);
         ArgumentException.ThrowIfNullOrWhiteSpace(channel);
@@ -37,7 +37,7 @@ public class ChatMessageRepository(
         var cachedContext = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
         var history = cachedContext is not null
-            ? JsonSerializer.Deserialize<List<string>>(cachedContext) ?? []
+            ? JsonSerializer.Deserialize<List<ChatMessage>>(cachedContext) ?? []
         : [];
 
         history.AddRange(messages);

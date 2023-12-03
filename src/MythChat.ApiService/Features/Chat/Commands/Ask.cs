@@ -93,8 +93,8 @@ public class Ask : ICarterModule
                 };
 
                 history = history
-                    .Append($"User: {response.Input}")
-                    .Append($"{agent.Name}: {response.Output}");
+                    .Append(new(response.Channel, "User", response.Input))
+                    .Append(new(response.Channel, response.Agent, response.Output));
 
                 history = await chatMessageRepository.SaveMessagesAsync(agent, request.Channel, history, cancellationToken);
 
