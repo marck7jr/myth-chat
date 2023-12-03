@@ -70,15 +70,14 @@
                     Content = x.Content,
                 });
 
-            var command = new SendMessageCommand
+            var command = new AskCommand
                 {
                     Agent = Agent,
-                    History = history.ToList(),
+                    Group = Region,
                     Input = Model.Message,
-                    Region = Region,
                 };
 
-            var response = await apiServiceClient.Chat.PostAsync(command);
+            var response = await apiServiceClient.Chat.Ask.PostAsync(command);
             var output = response?.Output;
 
             var agentEntry = new ChatsEntry

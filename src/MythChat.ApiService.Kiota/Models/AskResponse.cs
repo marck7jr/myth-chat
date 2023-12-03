@@ -22,6 +22,14 @@ namespace MythChat.ApiService.Kiota.Models {
 #else
         public string Channel { get; set; }
 #endif
+        /// <summary>The group property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Group { get; set; }
+#nullable restore
+#else
+        public string Group { get; set; }
+#endif
         /// <summary>The input property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -53,6 +61,7 @@ namespace MythChat.ApiService.Kiota.Models {
             return new Dictionary<string, Action<IParseNode>> {
                 {"agent", n => { Agent = n.GetStringValue(); } },
                 {"channel", n => { Channel = n.GetStringValue(); } },
+                {"group", n => { Group = n.GetStringValue(); } },
                 {"input", n => { Input = n.GetStringValue(); } },
                 {"output", n => { Output = n.GetStringValue(); } },
             };
@@ -65,6 +74,7 @@ namespace MythChat.ApiService.Kiota.Models {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("agent", Agent);
             writer.WriteStringValue("channel", Channel);
+            writer.WriteStringValue("group", Group);
             writer.WriteStringValue("input", Input);
             writer.WriteStringValue("output", Output);
         }

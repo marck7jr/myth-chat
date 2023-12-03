@@ -31,6 +31,7 @@ public class Ask : ICarterModule
     {
         public string? Agent { get; init; }
         public string? Channel { get; init; }
+        public string? Group { get; init; }
         public string? Input { get; init; }
     }
 
@@ -38,6 +39,7 @@ public class Ask : ICarterModule
     {
         public string? Agent { get; init; }
         public string? Channel { get; init; }
+        public string? Group { get; init; }
         public string? Input { get; init; }
         public string? Output { get; init; }
     }
@@ -60,7 +62,9 @@ public class Ask : ICarterModule
             {
 
                 var options = optionsSnapshot.Value;
-                var agent = options.Agents.FirstOrDefault(x => string.Equals(x.Name, request.Agent, StringComparison.OrdinalIgnoreCase));
+                var agent = options.Agents.FirstOrDefault(x =>
+                    string.Equals(x.Name, request.Agent, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(x.Group, request.Group, StringComparison.OrdinalIgnoreCase));
 
                 if (agent is null)
                 {
@@ -100,6 +104,7 @@ public class Ask : ICarterModule
         public AskCommandValidator()
         {
             RuleFor(x => x.Agent).NotEmpty();
+            RuleFor(x => x.Group).NotEmpty();
             RuleFor(x => x.Input).NotEmpty();
         }
     }
