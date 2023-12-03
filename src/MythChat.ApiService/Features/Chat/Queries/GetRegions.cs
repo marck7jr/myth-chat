@@ -42,7 +42,7 @@ public class GetRegions : ICarterModule
 
     public class GetRegionsQueryHandler(
         ILogger<GetRegionsQueryHandler> logger,
-        IOptionsSnapshot<SemanticKernelOptions> optionsSnapshot,
+        IOptionsSnapshot<ChatOptions> optionsSnapshot,
         IValidator<GetRegionsQuery> validator) : IRequestHandler<GetRegionsQuery, IResult>
     {
         public async Task<IResult> Handle(GetRegionsQuery request, CancellationToken cancellationToken)

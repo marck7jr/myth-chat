@@ -6,7 +6,7 @@ using MythChat.ApiService.Configuration;
 
 namespace MythChat.ApiService.Extensions;
 
-public static class SemanticKernelExtensions
+public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddSemanticKernel(this IServiceCollection services)
     {

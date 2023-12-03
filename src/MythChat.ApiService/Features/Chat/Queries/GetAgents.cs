@@ -3,10 +3,11 @@ using Carter.ModelBinding;
 
 using FluentValidation;
 
+using Mapster;
+
 using MediatR;
 
 using Microsoft.Extensions.Options;
-using Microsoft.SemanticKernel;
 
 using MythChat.ApiService.Configuration;
 
@@ -38,12 +39,13 @@ public class GetAgents : ICarterModule
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public string? Region { get; set; }
+        public string? Group { get; set; }
+        public string? Type { get; set; }
     }
 
     public class GetAvailableAgentsQueryHandler(
         ILogger<GetAvailableAgentsQueryHandler> logger,
-        IOptionsSnapshot<SemanticKernelOptions> optionsSnapshot,
+        IOptionsSnapshot<ChatOptions> optionsSnapshot,
         IValidator<GetAvailableAgentsQuery> validator) : IRequestHandler<GetAvailableAgentsQuery, IResult>
     {
         public async Task<IResult> Handle(GetAvailableAgentsQuery request, CancellationToken cancellationToken)
@@ -58,13 +60,7 @@ public class GetAgents : ICarterModule
             try
             {
                 var options = optionsSnapshot.Value;
-                var agents = options.Agents
-                    .Select(x => new GetAvailableAgentsResponseAgent
-                    {
-                        Name = x.Name,
-                        Description = x.Description,
-                        Region = x.Group,
-                    });
+                var agents = options.Agents.Adapt<IEnumerable<GetAvailableAgentsResponseAgent>>();
 
                 if (!string.IsNullOrWhiteSpace(request.Query))
                 {
