@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-using Carter;
+﻿using Carter;
 using Carter.ModelBinding;
 
 using FluentValidation;
@@ -9,12 +7,10 @@ using Mapster;
 
 using MediatR;
 
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 
-using MythChat.ApiService.Configuration;
 using MythChat.ApiService.Extensions;
+using MythChat.ApiService.Features.Chat.Contracts;
 
 namespace MythChat.ApiService.Features.Chat.Commands;
 
@@ -51,9 +47,9 @@ public class Ask : ICarterModule
     }
 
     public class AskCommandHandler(
-        IDistributedCache distributedCache,
+        IChatAgentRepository chatAgentRepository,
+        IChatMessageRepository chatMessageRepository,
         IKernel kernel,
-        IOptionsSnapshot<ChatOptions> optionsSnapshot,
         IValidator<AskCommand> validator) : IRequestHandler<AskCommand, IResult>
     {
         public async Task<IResult> Handle(AskCommand request, CancellationToken cancellationToken)
@@ -67,10 +63,7 @@ public class Ask : ICarterModule
 
             try
             {
-                var options = optionsSnapshot.Value;
-                var agent = options.Agents.FirstOrDefault(x =>
-                    string.Equals(x.Name, request.Agent, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(x.Group, request.Group, StringComparison.OrdinalIgnoreCase));
+                var agent = chatAgentRepository.GetAgentByNameAndGroup(request.Agent, request.Group);
 
                 if (agent is null)
                 {
@@ -81,12 +74,7 @@ public class Ask : ICarterModule
                     .WithVariables(agent)
                     .WithVariables(request);
 
-                var cacheKey = $"{request.Group}:{request.Agent}:{request.Channel}";
-                var cachedContext = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
-
-                var history = cachedContext is not null
-                    ? JsonSerializer.Deserialize<List<string>>(cachedContext) ?? []
-                    : [];
+                var history = await chatMessageRepository.GetMessagesAsync(agent, request.Channel, cancellationToken);
 
                 context.Variables["history"] = string.Join(Environment.NewLine, history);
 
@@ -104,10 +92,11 @@ public class Ask : ICarterModule
                     Output = functionResult.ToString(),
                 };
 
-                history.Add($"User: {response.Input}");
-                history.Add($"{agent.Name}: {response.Output}");
+                history = history
+                    .Append($"User: {response.Input}")
+                    .Append($"{agent.Name}: {response.Output}");
 
-                await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(history), cancellationToken);
+                history = await chatMessageRepository.SaveMessagesAsync(agent, request.Channel, history, cancellationToken);
 
                 var result = TypedResults.Ok(response);
                 return result;

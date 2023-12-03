@@ -4,6 +4,7 @@ using FluentValidation;
 
 using MythChat.ApiService.Configuration;
 using MythChat.ApiService.Extensions;
+using MythChat.ApiService.Features.Chat;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,8 @@ builder.Services.AddCarter();
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining<Program>());
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
 builder.Services.AddSemanticKernel();
+
+builder.Services.AddChatFeature();
 
 var app = builder.Build();
 
