@@ -1,7 +1,7 @@
-﻿@using MythChat.Web.Components.Pages.Chats.Models
+﻿@using MythChat.Web.Components.Pages.Chat.Models
 
 @inject ApiServiceClient apiServiceClient
-@inject ILogger<ChatsUserInput> logger
+@inject ILogger<ChatUserInput> logger
 @inject ISnackbar snackbar
 
 <EditForm @ref="editForm" Model="Model" OnValidSubmit="OnValidSubmit">
@@ -35,9 +35,9 @@
     [Parameter] public bool IsLoading { get; set; } = false;
     [Parameter] public EventCallback<bool> IsLoadingChanged { get; set; }
 
-    [Parameter] public EventCallback<ChatsEntry> OnMessageSent { get; set; }
+    [Parameter] public EventCallback<ChatEntry> OnMessageSent { get; set; }
 
-    protected List<ChatsEntry> Entries { get; set; } = new();
+    protected List<ChatEntry> Entries { get; set; } = new();
     protected ChatUserInputModel Model { get; set; } = new();
 
     private async Task OnValidSubmit()
@@ -53,7 +53,7 @@
 
         StateHasChanged();
 
-        var userEntry = new ChatsEntry
+        var userEntry = new ChatEntry
             {
                 Author = "User",
                 Content = Model.Message,
@@ -75,7 +75,7 @@
             var response = await apiServiceClient.Chat.Ask[Channel].PostAsync(command);
             var output = response?.Output;
 
-            var agentEntry = new ChatsEntry
+            var agentEntry = new ChatEntry
                 {
                     Author = Agent,
                     Content = output,

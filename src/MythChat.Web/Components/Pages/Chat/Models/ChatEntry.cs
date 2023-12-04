@@ -1,6 +1,6 @@
-﻿namespace MythChat.Web.Components.Pages.Chats.Models;
+﻿namespace MythChat.Web.Components.Pages.Chat.Models;
 
-public class ChatsEntry
+public class ChatEntry
 {
     public bool IsFromAgent { get; set; }
     public string? Author { get; set; }

@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MythChat.ApiService", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MythChat.Web", "src\MythChat.Web\MythChat.Web.csproj", "{3D595169-D058-4BEB-A10D-4BBC93869910}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MythChat.ApiService.Kiota", "src\MythChat.ApiService.Kiota\MythChat.ApiService.Kiota.csproj", "{7951A633-5FAA-4669-BCBF-B8D204389E34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MythChat.ApiService.Kiota", "src\MythChat.ApiService.Kiota\MythChat.ApiService.Kiota.csproj", "{7951A633-5FAA-4669-BCBF-B8D204389E34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
