@@ -44,4 +44,21 @@ public class ChatAgentRepository(
 
         return groups ?? [];
     }
+
+    public IEnumerable<ChatAgentType> GetTypes(string? query = null)
+    {
+        var agents = !string.IsNullOrWhiteSpace(query)
+            ? Agents.Where(x => x.Type.Contains(query, StringComparison.OrdinalIgnoreCase))
+            : Agents;
+
+        var types = agents
+            .GroupBy(x => x.Type)
+            .Select(type => new ChatAgentType
+            {
+                Name = type.Key,
+                Agents = type
+            });
+
+        return types ?? [];
+    }
 }

@@ -8,4 +8,5 @@ public interface IChatAgentRepository
 
     IEnumerable<ChatAgent> GetAgents(string? query = null);
     IEnumerable<ChatAgentGroup> GetGroups(string? query = null);
+    IEnumerable<ChatAgentType> GetTypes(string? query = null);
 }
