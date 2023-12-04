@@ -9,7 +9,7 @@
 @inject IHistoryService HistoryService
 
 <PageTitle>
-    Chat - @Type - @Group - @Name / @Channel
+    MythChat / Chat
 </PageTitle>
 
 <MudContainer>
@@ -44,7 +44,7 @@
                            @bind-Channel="@Channel"
                            @bind-Name="@Name"
                            @bind-Group="@Group"
-                           @bind-Type="@Group"
+                           @bind-Type="@Type"
                            @bind-IsLoading="IsLoading" />
         </MudItem>
     </MudGrid>
@@ -69,6 +69,9 @@
 
         if (string.IsNullOrEmpty(Channel))
         {
+            Channel = Guid.NewGuid().ToString("N");
+            StateHasChanged();
+
             return;
         }
 
