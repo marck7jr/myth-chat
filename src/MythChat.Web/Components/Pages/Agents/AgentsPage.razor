@@ -5,22 +5,33 @@
 <h3>Page</h3>
 
 <ul>
-    @foreach (var item in items)
+    @foreach (var item in Regions)
     {
         <li>@item</li>
+        <MudImage OnClick="" Src="Greece.jpg" Width="250" Height="250"/>
+    }
+    @if(selectedRegion is not null){
+        @foreach (var item in Agents.Where(x=>x.Name==selectedRegion).Select(x=>x.Agents))
+        {
+            <li>@item</li>
+            <MudImage OnClick="" Src="Greece.jpg" Width="250" Height="250"/>
+        }
     }
 </ul>
 
 @code {
-    private IEnumerable<string?> items = [];
+    private IEnumerable<GetRegionsResponseRegion> Agents = [];
+    private IEnumerable<string?> Regions = [];
+    string? selectedRegion="Norse";
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await apiServiceClient.Chat.Agents.GetAsync();
-        var agents = response?.Agents?.Select(x => x?.Name);
-
-        items = agents ?? [];
-
+        var responseRegion = await apiServiceClient.Chat.Regions.GetAsync();
+        var regions = responseRegion?.Regions?.Select(x => x?.Name);
+        var agents = responseRegion?.Regions;
+        Agents = agents ?? [];
+        Regions = regions ?? [];
+        
         StateHasChanged();
     }
 }
