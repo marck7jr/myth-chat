@@ -6,7 +6,12 @@
 @rendermode InteractiveServer
 <h3>Agents</h3>
 
-
+<MudSelect HelperText="Helper text" @bind-Value="@selectedType" T="string" Label="With Helper" Variant="Variant.Text" >
+    @foreach (var item in Types)
+    {
+        <MudSelectItem Value="@item" />
+    }
+</MudSelect>
 <MudGrid Justify="Justify.Center">
     @foreach (var item in Regions)
     {
@@ -28,34 +33,42 @@
     }
 </MudGrid>
 <MudGrid>
-    @if(selectedRegion is not null){
-        @foreach (var item in Agents.Where(x=>x.Name==selectedRegion).SelectMany(x=>x.Agents??new List<string>()))
+    @if(Agents is not null){
+        @foreach (var item in Agents)
         {
             <MudItem>
-                <MudButton @onclick='() => _navigationManager.NavigateTo("chat?region="+selectedRegion+"&agent="+item)' Variant="Variant.Filled" Color="Color.Primary">@item</MudButton>   
+                <MudButton @onclick='() => _navigationManager.NavigateTo("chat?type="+selectedType+"&group="+selectedRegion+"&name="+item)' Variant="Variant.Filled" Color="Color.Primary">@item</MudButton>   
             </MudItem>
         }
     }
 </MudGrid>
 
 @code {
-    private IEnumerable<GetRegionsResponseRegion> Agents = [];
+    private IEnumerable<string?> Agents = null;
     private IEnumerable<string?> Regions = [];
-    string? selectedRegion="Norse";
+    private IEnumerable<string?> Types = [];
+    private string selectedRegion = "";
+    private string selectedType = "Deity";
 
     protected override async Task OnInitializedAsync()
     {
-        var responseRegion = await apiServiceClient.Chat.Regions.GetAsync();
-        var regions = responseRegion?.Regions?.Select(x => x?.Name);
-        var agents = responseRegion?.Regions;
-        Agents = agents ?? [];
+        var responseType = await apiServiceClient.Chat.Agents.Types.GetAsync();
+        var types = responseType?.Types?.Select(x => x?.Name);
+        var responseRegion = await apiServiceClient.Chat.Agents.Groups.GetAsync();
+        var regions = responseRegion?.Groups?.Select(x => x?.Name);
         Regions = regions ?? [];
+        Types = types ?? [];
         
         StateHasChanged();
     }
     private async Task SelectRegion(string? region)
     {
+        if(region is null)
+            return;
         selectedRegion = region;
+        var responseAgents = await apiServiceClient.Chat.Agents[selectedType][selectedRegion].GetAsync();
+        var agents = responseAgents?.Agents?.Select(x => x?.Name);
+        Agents = agents ?? [];
         StateHasChanged();
     }
 }
