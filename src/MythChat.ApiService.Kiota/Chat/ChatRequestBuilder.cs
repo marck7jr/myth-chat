@@ -2,7 +2,6 @@
 using Microsoft.Kiota.Abstractions;
 using MythChat.ApiService.Kiota.Chat.Agents;
 using MythChat.ApiService.Kiota.Chat.Ask;
-using MythChat.ApiService.Kiota.Chat.Regions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,10 +19,6 @@ namespace MythChat.ApiService.Kiota.Chat {
         /// <summary>The ask property</summary>
         public AskRequestBuilder Ask { get =>
             new AskRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The regions property</summary>
-        public RegionsRequestBuilder Regions { get =>
-            new RegionsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new ChatRequestBuilder and sets the default values.
