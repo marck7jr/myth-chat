@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <AppLayoutHeader />
+
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6" Style="min-height: 100vh;">
+            @Body
+        </MudContainer>
+
+        <MudContainer Class="mt-6">
+            <AppLayoutFooter />
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

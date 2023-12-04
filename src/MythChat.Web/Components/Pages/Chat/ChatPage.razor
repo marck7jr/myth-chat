@@ -1,8 +1,8 @@
-﻿@page "/chats"
+﻿@page "/chat"
 @rendermode InteractiveServer
 
-@using MythChat.Web.Components.Pages.Chats.Components
-@using MythChat.Web.Components.Pages.Chats.Models
+@using MythChat.Web.Components.Pages.Chat.Components
+@using MythChat.Web.Components.Pages.Chat.Models
 
 @inject ApiServiceClient apiServiceClient
 
@@ -35,10 +35,10 @@
             }
         </MudItem>
         <MudItem xs="12">
-            <ChatsUserInput OnMessageSent="OnMessageSent"
-                            @bind-Agent="@Agent"
-                            @bind-Region="@Region"
-                            @bind-IsLoading="IsLoading" />
+            <ChatUserInput OnMessageSent="OnMessageSent"
+                           @bind-Agent="@Agent"
+                           @bind-Region="@Region"
+                           @bind-IsLoading="IsLoading" />
         </MudItem>
     </MudGrid>
 </MudContainer>
@@ -47,10 +47,10 @@
     [SupplyParameterFromQuery] public string? Agent { get; set; } = "Zeus";
     [SupplyParameterFromQuery] public string? Region { get; set; } = "Greece";
 
-    protected List<ChatsEntry> Entries { get; set; } = [];
+    protected List<ChatEntry> Entries { get; set; } = [];
     protected bool IsLoading { get; set; }
 
-    private async Task OnMessageSent(ChatsEntry entry)
+    private async Task OnMessageSent(ChatEntry entry)
     {
         Entries.Add(entry);
 

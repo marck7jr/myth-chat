@@ -1,0 +1,59 @@
+﻿@using MythChat.Web.Models
+@rendermode InteractiveServer
+
+@inject ProtectedLocalStorage ProtectedLocalStorage
+
+<MudAppBar Elevation="1" Dense="true">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+    <MudSpacer />
+</MudAppBar>
+<MudDrawer ClipMode="DrawerClipMode.Docked" @bind-Open="@open" Elevation="1" Variant="DrawerVariant.Temporary">
+    <MudDrawerHeader Class="d-flex flex-column">
+        <MudText Typo="Typo.h6">MythChat</MudText>
+        <MudText Typo="Typo.body2">v0.0.1</MudText>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudNavLink Href="" Icon="@Icons.Material.Outlined.Home" Match="NavLinkMatch.All">Home</MudNavLink>
+        <MudNavLink Href="agents" Icon="@Icons.Material.Outlined.Group" Match="NavLinkMatch.Prefix">Agents</MudNavLink>
+        <MudNavLink Href="chat" Icon="@Icons.Material.Outlined.Chat" Match="NavLinkMatch.Prefix">Chat</MudNavLink>
+        @if (entries.Any())
+        {
+            <MudNavGroup Icon="@Icons.Material.Outlined.History" Title="History">
+                @foreach (var entry in entries)
+                {
+                    <MudNavLink Href="@($"chat/{entry.Channel}")">
+                        @entry.Group: @entry.Agent
+                    </MudNavLink>
+                }
+            </MudNavGroup>
+        }
+    </MudNavMenu>
+</MudDrawer>
+
+@code {
+    private bool open = false;
+    private IEnumerable<HistoryEntryModel> entries = [];
+
+    private void ToggleDrawer()
+    {
+        open = !open;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        var result = await ProtectedLocalStorage.GetAsync<string?>("history");
+        var history = result.Value;
+
+        if (string.IsNullOrEmpty(history))
+        {
+            return;
+        }
+
+        entries = JsonSerializer.Deserialize<IEnumerable<HistoryEntryModel>>(history) ?? [];
+    }
+}
