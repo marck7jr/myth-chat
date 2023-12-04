@@ -1,7 +1,6 @@
-﻿@using MythChat.Web.Models
-@rendermode InteractiveServer
+﻿@rendermode InteractiveServer
 
-@inject ProtectedLocalStorage ProtectedLocalStorage
+@inject IHistoryService HistoryService
 
 <MudAppBar Elevation="1" Dense="true">
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
@@ -46,14 +45,6 @@
             return;
         }
 
-        var result = await ProtectedLocalStorage.GetAsync<string?>("history");
-        var history = result.Value;
-
-        if (string.IsNullOrEmpty(history))
-        {
-            return;
-        }
-
-        entries = JsonSerializer.Deserialize<IEnumerable<HistoryEntryModel>>(history) ?? [];
+        entries = await HistoryService.GetEntriesAsync();
     }
 }

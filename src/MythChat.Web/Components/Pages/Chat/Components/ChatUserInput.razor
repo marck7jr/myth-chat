@@ -1,6 +1,7 @@
 ﻿@using MythChat.Web.Components.Pages.Chat.Models
 
 @inject ApiServiceClient apiServiceClient
+@inject IHistoryService HistoryService
 @inject ILogger<ChatUserInput> logger
 @inject ISnackbar snackbar
 
@@ -29,9 +30,13 @@
 
     [Parameter] public string? Agent { get; set; } = "Zeus";
     [Parameter] public EventCallback<string?> AgentChanged { get; set; }
+
     [Parameter] public string? Channel { get; set; } = Guid.NewGuid().ToString("N");
+    [Parameter] public EventCallback<string?> ChannelChanged { get; set; }
+    
     [Parameter] public string? Region { get; set; } = "Greece";
     [Parameter] public EventCallback<string?> RegionChanged { get; set; }
+    
     [Parameter] public bool IsLoading { get; set; } = false;
     [Parameter] public EventCallback<bool> IsLoadingChanged { get; set; }
 
@@ -85,6 +90,7 @@
             Entries.Add(agentEntry);
 
             await OnMessageSent.InvokeAsync(agentEntry);
+            await HistoryService.AddEntryAsync(new(Channel, Region, Agent));
         }
         catch (Exception ex)
         {

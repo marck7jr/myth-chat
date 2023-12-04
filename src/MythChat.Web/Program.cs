@@ -4,8 +4,9 @@ using Microsoft.Kiota.Http.HttpClientLibrary;
 using MudBlazor.Services;
 
 using MythChat.ApiService.Kiota;
-using MythChat.Web;
 using MythChat.Web.Components;
+using MythChat.Web.Contracts;
+using MythChat.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ builder.Services.AddScoped(provider =>
 
     return client;
 });
+
+builder.Services.AddScoped<IHistoryService, HistoryService>();
 
 var app = builder.Build();
 

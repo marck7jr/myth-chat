@@ -1,11 +1,12 @@
 ﻿@page "/chat"
+@page "/chat/{channel}"
+
 @rendermode InteractiveServer
 
 @using MythChat.Web.Components.Pages.Chat.Components
 @using MythChat.Web.Components.Pages.Chat.Models
 
-@inject ApiServiceClient apiServiceClient
-
+@inject IHistoryService HistoryService
 
 <MudContainer>
     <MudText Class="fw-bolder" Typo="Typo.h4">Chats</MudText>
@@ -36,6 +37,7 @@
         </MudItem>
         <MudItem xs="12">
             <ChatUserInput OnMessageSent="OnMessageSent"
+                           @bind-Channel="@Channel"
                            @bind-Agent="@Agent"
                            @bind-Region="@Region"
                            @bind-IsLoading="IsLoading" />
@@ -44,11 +46,38 @@
 </MudContainer>
 
 @code {
-    [SupplyParameterFromQuery] public string? Agent { get; set; } = "Zeus";
-    [SupplyParameterFromQuery] public string? Region { get; set; } = "Greece";
+    [Parameter] public string? Channel { get; set; }
+
+    [SupplyParameterFromQuery] public string? Agent { get; set; }
+    [SupplyParameterFromQuery] public string? Region { get; set; }
 
     protected List<ChatEntry> Entries { get; set; } = [];
     protected bool IsLoading { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(Channel))
+        {
+            return;
+        }
+
+        var entry = await HistoryService.GetEntryAsync(Channel);
+
+        if (entry is null)
+        {
+            return;
+        }
+
+        Agent = entry.Agent;
+        Region = entry.Group;
+
+        StateHasChanged();
+    }
 
     private async Task OnMessageSent(ChatEntry entry)
     {
