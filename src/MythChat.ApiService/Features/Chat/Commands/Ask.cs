@@ -63,7 +63,7 @@ public class Ask : ICarterModule
 
             try
             {
-                var agent = chatAgentRepository.GetAgentByNameAndGroup(request.Agent, request.Group);
+                var agent = chatAgentRepository.GetAgent(request.Agent, request.Group);
 
                 if (agent is null)
                 {

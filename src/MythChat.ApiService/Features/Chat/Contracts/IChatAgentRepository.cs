@@ -6,8 +6,7 @@ public interface IChatAgentRepository
 {
     public IEnumerable<ChatAgent> Agents { get; }
 
-    ChatAgent? GetAgent(string? query);
-    ChatAgent? GetAgentByNameAndGroup(string? name, string? group);
-    IEnumerable<ChatAgent> GetAgentsByGroup(string? group);
-    IEnumerable<ChatAgent> GetAgentsByType(string? type);
+    IEnumerable<ChatAgent> GetAgents(string? query);
+    ChatAgent? GetAgent(string? name, string? group);
+    IEnumerable<ChatAgentGroup> GetGroups(string? query);
 }
