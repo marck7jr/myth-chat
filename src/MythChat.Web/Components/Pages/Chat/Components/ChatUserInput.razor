@@ -33,14 +33,17 @@
 
     [Parameter] public string? Channel { get; set; } = Guid.NewGuid().ToString("N");
     [Parameter] public EventCallback<string?> ChannelChanged { get; set; }
-    
-    [Parameter] public string? Region { get; set; } = "Greece";
-    [Parameter] public EventCallback<string?> RegionChanged { get; set; }
-    
+
+    [Parameter] public string? Group { get; set; } = "Greece";
+    [Parameter] public EventCallback<string?> GroupChanged { get; set; }
+
     [Parameter] public bool IsLoading { get; set; } = false;
     [Parameter] public EventCallback<bool> IsLoadingChanged { get; set; }
 
     [Parameter] public EventCallback<ChatEntry> OnMessageSent { get; set; }
+
+    [Parameter] public string? Type { get; set; } = "Deity";
+    [Parameter] public EventCallback<string?> TypeChanged { get; set; }
 
     protected List<ChatEntry> Entries { get; set; } = new();
     protected ChatUserInputModel Model { get; set; } = new();
@@ -70,14 +73,15 @@
 
         try
         {
-            var command = new AskCommand
+            var body = new AskCommandBody
                 {
-                    Agent = Agent,
-                    Group = Region,
+                    Name = Agent,
+                    Group = Group,
                     Input = Model.Message,
+                    Type = Type,
                 };
 
-            var response = await apiServiceClient.Chat.Ask[Channel].PostAsync(command);
+            var response = await apiServiceClient.Chat.Ask[Channel].PostAsync(body);
             var output = response?.Output;
 
             var agentEntry = new ChatEntry
@@ -90,7 +94,7 @@
             Entries.Add(agentEntry);
 
             await OnMessageSent.InvokeAsync(agentEntry);
-            await HistoryService.AddEntryAsync(new(Channel, Region, Agent));
+            await HistoryService.AddEntryAsync(new(Channel, Type, Group, Agent));
         }
         catch (Exception ex)
         {

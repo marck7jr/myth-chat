@@ -15,19 +15,7 @@ public class ChatAgentRepository(
 
     public IEnumerable<ChatAgent> Agents { get => _agents; }
 
-    public ChatAgent? GetAgent(string? name, string? group)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        ArgumentException.ThrowIfNullOrWhiteSpace(group);
-
-        var agent = Agents.FirstOrDefault(x =>
-            string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase) &&
-            string.Equals(x.Group, group, StringComparison.OrdinalIgnoreCase));
-
-        return agent;
-    }
-
-    public IEnumerable<ChatAgent> GetAgents(string? query)
+    public IEnumerable<ChatAgent> GetAgents(string? query = null)
     {
         var agents = !string.IsNullOrWhiteSpace(query)
             ? Agents.Where(x =>
@@ -40,7 +28,7 @@ public class ChatAgentRepository(
         return agents ?? [];
     }
 
-    public IEnumerable<ChatAgentGroup> GetGroups(string? query)
+    public IEnumerable<ChatAgentGroup> GetGroups(string? query = null)
     {
         var agents = !string.IsNullOrWhiteSpace(query)
             ? Agents.Where(x => x.Group.Contains(query, StringComparison.OrdinalIgnoreCase))

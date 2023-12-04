@@ -9,7 +9,7 @@
 @inject IHistoryService HistoryService
 
 <PageTitle>
-    Chat - @Region: @Agent - @Channel
+    Chat - @Type - @Group - @Name / @Channel
 </PageTitle>
 
 <MudContainer>
@@ -42,8 +42,9 @@
         <MudItem xs="12">
             <ChatUserInput OnMessageSent="OnMessageSent"
                            @bind-Channel="@Channel"
-                           @bind-Agent="@Agent"
-                           @bind-Region="@Region"
+                           @bind-Name="@Name"
+                           @bind-Group="@Group"
+                           @bind-Type="@Group"
                            @bind-IsLoading="IsLoading" />
         </MudItem>
     </MudGrid>
@@ -52,8 +53,9 @@
 @code {
     [Parameter] public string? Channel { get; set; }
 
-    [SupplyParameterFromQuery] public string? Agent { get; set; }
-    [SupplyParameterFromQuery] public string? Region { get; set; }
+    [SupplyParameterFromQuery] public string? Name { get; set; }
+    [SupplyParameterFromQuery] public string? Group { get; set; }
+    [SupplyParameterFromQuery] public string? Type { get; set; }
 
     protected List<ChatEntry> Entries { get; set; } = [];
     protected bool IsLoading { get; set; }
@@ -77,8 +79,9 @@
             return;
         }
 
-        Agent = entry.Agent;
-        Region = entry.Group;
+        Type = entry.Type;
+        Group = entry.Group;
+        Name = entry.Name;
 
         StateHasChanged();
     }

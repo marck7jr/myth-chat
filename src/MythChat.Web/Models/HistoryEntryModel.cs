@@ -1,3 +1,3 @@
 ﻿namespace MythChat.Web.Models;
 
-public record HistoryEntryModel(string? Channel, string? Group, string? Agent);
+public record HistoryEntryModel(string? Channel, string? Type, string? Group, string? Name);

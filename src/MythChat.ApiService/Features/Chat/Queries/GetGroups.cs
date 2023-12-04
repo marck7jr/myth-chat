@@ -10,22 +10,20 @@ using MediatR;
 using MythChat.ApiService.Features.Chat.Contracts;
 using MythChat.ApiService.Features.Chat.Models;
 
-using static MythChat.ApiService.Features.Chat.Queries.GetGroups;
-
 namespace MythChat.ApiService.Features.Chat.Queries;
 
 public class GetGroups : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/chat/agents/groups", async([AsParameters] GetAgentGroupsQuery query, IMediator mediator) => await mediator.Send(query))
+        app.MapGet("/chat/agents/groups", async ([AsParameters] GetAgentGroupsQuery query, IMediator mediator) => await mediator.Send(query))
             .WithName(nameof(GetGroups))
             .WithTags("Chat")
             .ProducesValidationProblem()
             .Produces<GetAgentGroupsResponse>(StatusCodes.Status200OK)
             .WithOpenApi();
 
-        app.MapGet("/chat/agents/groups/{name}", async([AsParameters] GetAgentGroupByNameQuery query, IMediator mediator) => await mediator.Send(query))
+        app.MapGet("/chat/agents/groups/{name}", async ([AsParameters] GetAgentGroupByNameQuery query, IMediator mediator) => await mediator.Send(query))
             .WithName(nameof(GetAgentGroupByNameQuery))
             .WithTags("Chat")
             .ProducesValidationProblem()
