@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-using System.Text.Json;
+﻿using System.Text.Json;
+
+using Microsoft.Extensions.Caching.Distributed;
 
 using MythChat.ApiService.Features.Chat.Contracts;
 using MythChat.ApiService.Features.Chat.Models;

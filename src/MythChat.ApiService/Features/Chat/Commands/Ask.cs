@@ -18,10 +18,7 @@ public class Ask : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/chat/ask/{channel}", async (string channel, AskCommand command, IMediator mediator) => await mediator.Send(command with
-        {
-            Channel = channel,
-        }))
+        app.MapPost("/chat/ask/{channel}", async ([AsParameters] AskCommand command, IMediator mediator) => await mediator.Send(command))
             .WithName(nameof(Ask))
             .WithTags("Chat")
             .ProducesValidationProblem()
@@ -31,15 +28,22 @@ public class Ask : ICarterModule
 
     public record AskCommand : IRequest<IResult>
     {
-        public string? Agent { get; init; }
-        public string? Channel { get; init; }
-        public string? Group { get; init; }
-        public string? Input { get; init; }
+        public string Channel { get; init; } = string.Empty;
+        public AskCommandBody Body { get; init; } = new();
+    }
+
+    public record AskCommandBody
+    {
+        public string Group { get; init; } = string.Empty;
+        public string Input { get; init; } = string.Empty;
+        public string Name { get; init; } = string.Empty;
+        public string Type { get; init; } = string.Empty;
+
     }
 
     public record AskResponse
     {
-        public string? Agent { get; init; }
+        public string? Name { get; init; }
         public string? Channel { get; init; }
         public string? Group { get; init; }
         public string? Input { get; init; }
@@ -63,7 +67,12 @@ public class Ask : ICarterModule
 
             try
             {
-                var agent = chatAgentRepository.GetAgent(request.Agent, request.Group);
+                var body = request.Body;
+                var agents = chatAgentRepository.GetAgents();
+                var agent = agents.FirstOrDefault(x =>
+                    x.Type.Contains(body.Type, StringComparison.OrdinalIgnoreCase) &&
+                    x.Group.Contains(body.Group, StringComparison.OrdinalIgnoreCase) &&
+                    x.Name.Contains(body.Name, StringComparison.OrdinalIgnoreCase));
 
                 if (agent is null)
                 {
@@ -72,7 +81,7 @@ public class Ask : ICarterModule
 
                 var context = kernel.CreateNewContext()
                     .WithVariables(agent)
-                    .WithVariables(request);
+                    .WithVariables(body);
 
                 var history = await chatMessageRepository.GetMessagesAsync(agent, request.Channel, cancellationToken);
 
@@ -87,14 +96,15 @@ public class Ask : ICarterModule
 
                 var functionResult = await function.InvokeAsync(context, cancellationToken: cancellationToken);
 
-                var response = request.Adapt<AskResponse>() with
+                var response = body.Adapt<AskResponse>() with
                 {
+                    Channel = request.Channel,
                     Output = functionResult.ToString(),
                 };
 
                 history = history
                     .Append(new(response.Channel, "User", response.Input))
-                    .Append(new(response.Channel, response.Agent, response.Output));
+                    .Append(new(response.Channel, response.Name, response.Output));
 
                 history = await chatMessageRepository.SaveMessagesAsync(agent, request.Channel, history, cancellationToken);
 
@@ -113,9 +123,18 @@ public class Ask : ICarterModule
         public AskCommandValidator()
         {
             RuleFor(x => x.Channel).NotEmpty();
-            RuleFor(x => x.Agent).NotEmpty();
+            RuleFor(x => x.Body).NotNull().SetValidator(new AskCommandBodyValidator());
+        }
+    }
+
+    public class AskCommandBodyValidator : AbstractValidator<AskCommandBody>
+    {
+        public AskCommandBodyValidator()
+        {
             RuleFor(x => x.Group).NotEmpty();
             RuleFor(x => x.Input).NotEmpty();
+            RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.Type).NotEmpty();
         }
     }
 }

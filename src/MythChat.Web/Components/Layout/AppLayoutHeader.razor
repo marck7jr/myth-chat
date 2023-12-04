@@ -21,7 +21,7 @@
                 @foreach (var entry in entries)
                 {
                     <MudNavLink Href="@($"chat/{entry.Channel}")">
-                        @entry.Group: @entry.Agent
+                        @entry.Group: @entry.Name
                     </MudNavLink>
                 }
             </MudNavGroup>
