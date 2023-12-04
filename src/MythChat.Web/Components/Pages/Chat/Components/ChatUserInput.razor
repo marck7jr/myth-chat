@@ -10,7 +10,7 @@
         <MudItem xs="12">
             <MudTextField Disabled="IsLoading"
                           Immediate="true"
-                          Label="@Agent"
+                          Label="@Name"
                           Adornment="Adornment.End"
                           AdornmentIcon="@Icons.Material.Filled.Send"
                           OnAdornmentClick="OnValidSubmit"
@@ -28,8 +28,8 @@
 
     private EditForm editForm = null!;
 
-    [Parameter] public string? Agent { get; set; } = "Zeus";
-    [Parameter] public EventCallback<string?> AgentChanged { get; set; }
+    [Parameter] public string? Name { get; set; } = "Zeus";
+    [Parameter] public EventCallback<string?> NameChanged { get; set; }
 
     [Parameter] public string? Channel { get; set; } = Guid.NewGuid().ToString("N");
     [Parameter] public EventCallback<string?> ChannelChanged { get; set; }
@@ -75,7 +75,7 @@
         {
             var body = new AskCommandBody
                 {
-                    Name = Agent,
+                    Name = Name,
                     Group = Group,
                     Input = Model.Message,
                     Type = Type,
@@ -86,7 +86,7 @@
 
             var agentEntry = new ChatEntry
                 {
-                    Author = Agent,
+                    Author = Name,
                     Content = output,
                     IsFromAgent = true,
                 };
@@ -94,7 +94,7 @@
             Entries.Add(agentEntry);
 
             await OnMessageSent.InvokeAsync(agentEntry);
-            await HistoryService.AddEntryAsync(new(Channel, Type, Group, Agent));
+            await HistoryService.AddEntryAsync(new(Channel, Type, Group, Name));
         }
         catch (Exception ex)
         {
