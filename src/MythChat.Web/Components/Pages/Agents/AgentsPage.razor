@@ -1,26 +1,61 @@
 ﻿@page "/agents"
 
 @inject ApiServiceClient apiServiceClient
+@inject NavigationManager _navigationManager
+ 
+@rendermode InteractiveServer
+<h3>Agents</h3>
 
-<h3>Page</h3>
 
-<ul>
-    @foreach (var item in items)
+<MudGrid Justify="Justify.Center">
+    @foreach (var item in Regions)
     {
-        <li>@item</li>
+        
+        <MudItem md="3">
+            <div style="position: relative; cursor: pointer" @onclick="@(()=>SelectRegion(item))">
+
+                <MudImage Src="@(item+".jpg")" Height="250" Width="250" Alt=""/>
+                <MudPaper
+                Elevation="0"
+                Class="rounded-0"
+                Style="position: absolute; bottom: 0; left: 0; padding: 25px; width: 50vw; opacity: 0.6">
+
+                    @* Hack: the text is needed to give the transparent part the proper height, but will also display the text in 0.6 transparency *@
+                    <MudText Typo="Typo.h6">@item</MudText>
+                </MudPaper>
+            </div>
+        </MudItem>
     }
-</ul>
+</MudGrid>
+<MudGrid>
+    @if(selectedRegion is not null){
+        @foreach (var item in Agents.Where(x=>x.Name==selectedRegion).SelectMany(x=>x.Agents??new List<string>()))
+        {
+            <MudItem>
+                <MudButton @onclick='() => _navigationManager.NavigateTo("chat?region="+selectedRegion+"&agent="+item)' Variant="Variant.Filled" Color="Color.Primary">@item</MudButton>   
+            </MudItem>
+        }
+    }
+</MudGrid>
 
 @code {
-    private IEnumerable<string?> items = [];
+    private IEnumerable<GetRegionsResponseRegion> Agents = [];
+    private IEnumerable<string?> Regions = [];
+    string? selectedRegion="Norse";
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await apiServiceClient.Chat.Agents.GetAsync();
-        var agents = response?.Agents?.Select(x => x?.Name);
-
-        items = agents ?? [];
-
+        var responseRegion = await apiServiceClient.Chat.Regions.GetAsync();
+        var regions = responseRegion?.Regions?.Select(x => x?.Name);
+        var agents = responseRegion?.Regions;
+        Agents = agents ?? [];
+        Regions = regions ?? [];
+        
+        StateHasChanged();
+    }
+    private async Task SelectRegion(string? region)
+    {
+        selectedRegion = region;
         StateHasChanged();
     }
 }
