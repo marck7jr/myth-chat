@@ -39,8 +39,13 @@
         open = !open;
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender)
+        {
+            return;
+        }
+
         var result = await ProtectedLocalStorage.GetAsync<string?>("history");
         var history = result.Value;
 
