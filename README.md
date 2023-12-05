@@ -2,7 +2,7 @@
 
 ![MythChat](./assets/Screenshot%202023-12-04%20205351.png)
 
-[MythChat](https://github.com/marck7jr/myth-chat) is a sample chat application that allows users to chat with with agents that are powered by AI.
+[MythChat](https://github.com/marck7jr/myth-chat) is a sample chat application that allows users to chat with agents that are powered by AI.
 The agents are able to answer questions and provide information to the user. 
 The agents are powered by the [Semantic Kernel](https://github.com/microsoft/semantic-kernel) through the [OpenAI API](https://openai.com/).
 
