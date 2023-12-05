@@ -11,6 +11,7 @@ using Microsoft.SemanticKernel;
 
 using MythChat.ApiService.Extensions;
 using MythChat.ApiService.Features.Chat.Contracts;
+using MythChat.ApiService.Features.Chat.Models;
 
 namespace MythChat.ApiService.Features.Chat.Commands;
 
@@ -102,11 +103,13 @@ public class Ask : ICarterModule
                     Output = functionResult.ToString(),
                 };
 
-                history = history
-                    .Append(new(response.Channel, "User", response.Input))
-                    .Append(new(response.Channel, response.Name, response.Output));
+                var newMessages = new List<ChatMessage>()
+                {
+                    new(response.Channel, "User", response.Input),
+                    new(response.Channel, response.Name, response.Output)
+                };
 
-                history = await chatMessageRepository.SaveMessagesAsync(agent, request.Channel, history, cancellationToken);
+                history = await chatMessageRepository.SaveMessagesAsync(agent, request.Channel, newMessages, cancellationToken);
 
                 var result = TypedResults.Ok(response);
                 return result;
